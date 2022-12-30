@@ -6,7 +6,7 @@ To use it, you need to create an account at [Azion](https://manager.azion.com/si
 In this action, the Azion [CLI](https://www.azion.com/en/documentation/products/cli/overview/) is used to perform the deploy.
 
 There is an example template in this repository:
-  - [Example](https://)
+  - [Example](https://github.com/jcbsfilho/azion-sample-upstash)
 
 ## Inputs
 
@@ -31,8 +31,15 @@ Deploy message.
 ## Example usage
 
 ```yml
-uses: actions/edge-computing-deploy@v1
-with:
-  personalToken: ${{ secrets.PERSONAL_TOKEN }}
-  folder: "./dist"
+
+- name: edge-computing-deploy
+  id: azion_edge
+  uses: jcbsfilho/edge-computing-deploy@v1.0.0
+  with:
+    personalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
+    folder: "./dist"
+
+- name: Get the output Azion Edge Deploy
+  run: echo "Result ${{ steps.azion_edge.outputs.message }}"
+
 ```  
