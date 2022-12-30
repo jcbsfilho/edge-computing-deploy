@@ -1,0 +1,24 @@
+name: 'edge-computing-deploy'
+description: 'This action was created to help deploy an edge application at Azion.'
+inputs:
+  personalToken:
+    description: 'Personal Token'
+    required: true
+    default: '<personal token>'
+  folder:
+    description: 'Your project folder'
+    required: true
+    default: './dist'  
+outputs:
+  message:
+    description: 'Return message deploy'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.personalToken }}
+    - ${{ inputs.folder }}
+
+branding:
+  icon: cloud-lightning
+  color: orange
