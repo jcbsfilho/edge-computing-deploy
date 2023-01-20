@@ -34,7 +34,7 @@ Deploy message.
 
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v1.0.0
+  uses: jcbsfilho/edge-computing-deploy@v1.0.1
   with:
     personalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
     folder: "./dist"
