@@ -6,7 +6,7 @@ To use it, you need to create an account at [Azion](https://manager.azion.com/si
 In this action, the Azion [CLI](https://www.azion.com/en/documentation/products/cli/overview/) is used to perform the deploy.
 
 There is an example template in this repository:
-  - [Example](https://github.com/jcbsfilho/azion-sample-upstash)
+  - [Example](https://github.com/jcbsfilho/azion-sample-application)
 
 ## Inputs
 
