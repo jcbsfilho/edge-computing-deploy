@@ -4,7 +4,7 @@ message="completed"
 
 if [ ! -d "./azion" ]; then
   echo "Folder /azion does not exist."
-  exit 1
+  azioncli edge_applications init --type javascript
 fi
 
 azioncli configure --token $1
@@ -14,7 +14,7 @@ if [ ! -d "$2" ]; then
   exit 1
 fi
 
-RESULT_PUBLISH=$(azioncli webapp publish)
+RESULT_PUBLISH=$(azioncli edge_applications publish)
 
 if [[ "$RESULT_PUBLISH" == .*"Error".* ]]; then
   echo "$RESULT_PUBLISH"
