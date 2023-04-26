@@ -1,6 +1,6 @@
-FROM alpine:3.10
+FROM alpine:3.16
 
-RUN apk add curl jq
+RUN apk add curl jq git
 
 RUN curl -L https://downloads.azion.com/linux/x86_64/azioncli-0.50.0 > azioncli
 

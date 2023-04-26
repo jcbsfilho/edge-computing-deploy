@@ -6,21 +6,72 @@ To use it, you need to create an account at [Azion](https://manager.azion.com/si
 In this action, the Azion [CLI](https://www.azion.com/en/documentation/products/cli/overview/) is used to perform the deploy.
 
 There is an example template in this repository:
-  - [Example](https://github.com/jcbsfilho/azion-sample-application)
+
+- [Example](https://github.com/jcbsfilho/edge-upstash-redis-with-typescript)
+
+## Example usage
+
+```yml
+- name: edge-computing-deploy
+  id: azion_edge
+  uses: jcbsfilho/edge-computing-deploy@v2.0.0
+  with:
+    applicationName: "my-edge"
+    azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
+    commitConfig: true
+    functionFilePath: './worker/function.js'
+    argsFilePath: './args.json'
+
+- name: Get the output Azion Edge Deploy
+  run: |
+    echo "Message-= ${{ steps.azion_edge.outputs.message }}"
+    echo "Domain-= ${{ steps.azion_edge.outputs.domainApp }}"
+
+```
 
 ## Inputs
 
-### `personalToken`
+### `applicationName`
+
+Edge Application Name
+
+**Optional**
+
+> **Note**: if not provided, the name of the repo will be used.
+
+### `azionPersonalToken`
 
 Personal token created in RTM Azion.
 
 **Required**
 
-### `folder`
+### `commitConfig`
 
-Folder where your application was built (Edge Function).
+default: false
 
-**Required**
+Boolean to commit the settings for a new deploy.
+Settings: domain id, edge application id, function id.
+
+**Optional**
+
+> **Note**: if your branch is protected this setting needs to be manually saved in your repo.
+
+### `functionFilePath`
+
+default: `./worker/function.js`
+
+your function's file path
+
+**Optional**
+
+### `argsFilePath`
+
+default: `./args.json`
+
+file path of your arguments.
+Indicated to be generated in your build.
+
+**Optional**
 
 ## Outputs
 
@@ -28,18 +79,6 @@ Folder where your application was built (Edge Function).
 
 Deploy message.
 
-## Example usage
+### `domainApp`
 
-```yml
-
-- name: edge-computing-deploy
-  id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v1.1.0
-  with:
-    personalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
-    folder: "./dist"
-
-- name: Get the output Azion Edge Deploy
-  run: echo "Result ${{ steps.azion_edge.outputs.message }}"
-
-```  
+Url domain of your application
