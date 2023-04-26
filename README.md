@@ -37,7 +37,7 @@ Edge Application Name
 
 **Optional**
 
-> **Note**: if not provided, the name of the repo will be used.
+> **Note**: if not provided, the name of the repo will be used. Also if the configuration already exists (./azion/azion.json) it will be discarded and considered the name in the file
 
 ### `azionPersonalToken`
 
