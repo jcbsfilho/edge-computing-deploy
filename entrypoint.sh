@@ -26,6 +26,7 @@ then
 fi
 
 # change function file and args file
+echo $(jq --arg name "$INPUT_APPLICATIONNAME" '.name = $name' ./azion/azion.json ) > ./azion/azion.json
 echo $(jq --arg file "$INPUT_FUNCTIONFILEPATH" '.function.file = $file' ./azion/azion.json ) > ./azion/azion.json
 echo $(jq --arg file "$INPUT_ARGSFILEPATH" '.function.args = $file' ./azion/azion.json ) > ./azion/azion.json
 
