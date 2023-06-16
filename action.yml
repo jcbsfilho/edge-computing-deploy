@@ -12,22 +12,24 @@ inputs:
     required: false
     default: true
   functionFilePath:
-    description: 'Path function file ex: ./worker/function.js'
+    description: 'Path function file ex: worker/function.js'
     required: false
-    default: './worker/function.js'
-  argsFilePath:
-    description: 'Path args file ex: ./args.json'
+    default: 'worker/function.js'
+  functionArgsFilePath:
+    description: 'Path function args file ex: args.json' # no commit this file
     required: false
-    default: './args.json'
+    default: 'args.json'
+  configFilePath:
+    description: 'Path config file ex: azion/azion.json'
+    required: false
+    default: 'azion/azion.json'
 
 outputs:
-  message:
-    description: 'message deploy'
-  domainApp:
-    description: 'Return your domain app'  
+  applicationId:
+    description: 'Return application id'  
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'node16'
+  main: 'index.js'
 
 branding:
   icon: cloud-lightning

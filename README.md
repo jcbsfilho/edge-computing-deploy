@@ -3,29 +3,28 @@
 This action was created to help deploy an edge application at Azion.
 To use it, you need to create an account at [Azion](https://manager.azion.com/signup/) and use configuration files.
 
-In this action, the Azion [CLI](https://www.azion.com/en/documentation/products/cli/overview/) is used to perform the deploy.
 
 There is an example template in this repository:
 
-- [Example](https://github.com/jcbsfilho/edge-upstash-redis-with-typescript)
+- [Example](https://github.com/jcbsfilho/edge-upstash-geolocation)
 
 ## Example usage
 
 ```yml
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v2.0.0
+  uses: jcbsfilho/edge-computing-deploy@v3.0.0
   with:
     applicationName: "my-edge"
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
     commitConfig: true
-    functionFilePath: './worker/function.js'
-    argsFilePath: './args.json'
+    functionFilePath: 'worker/function.js'
+    argsFilePath: 'args.json'
+    configFilePath: 'azion/azion.json'
 
 - name: Get the output Azion Edge Deploy
   run: |
-    echo "Message-= ${{ steps.azion_edge.outputs.message }}"
-    echo "Domain-= ${{ steps.azion_edge.outputs.domainApp }}"
+    echo "Application ID-= ${{ steps.azion_edge.outputs.applicationId }}"
 
 ```
 
@@ -58,27 +57,33 @@ Settings: domain id, edge application id, function id.
 
 ### `functionFilePath`
 
-default: `./worker/function.js`
+default: `worker/function.js`
 
 your function's file path
 
 **Optional**
 
-### `argsFilePath`
+### `functionArgsFilePath`
 
-default: `./args.json`
+default: `args.json`
 
-file path of your arguments.
+function file path of your arguments.
 Indicated to be generated in your build.
+
+> **Note**: no commit this file.
+
+**Optional**
+
+### `configFilePath`
+
+default: `azion/azion.json`
+
+file to save the id's information (edge application, function, domain)
 
 **Optional**
 
 ## Outputs
 
-### `message`
+### `applicationId`
 
-Deploy message.
-
-### `domainApp`
-
-Url domain of your application
+Edge Application ID
