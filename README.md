@@ -19,7 +19,7 @@ There is an example template in this repository:
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
     commitConfig: true
     functionFilePath: 'worker/function.js'
-    argsFilePath: 'args.json'
+    functionArgsFilePath: 'args.json'
     configFilePath: 'azion/azion.json'
 
 - name: Get the output Azion Edge Deploy
