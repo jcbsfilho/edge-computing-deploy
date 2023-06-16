@@ -39,6 +39,8 @@ const execute = async () => {
     FUNCTION_ARGS = {};
   });
 
+  FUNCTION_ARGS = parseJsonFile(FUNCTION_ARGS);
+
   const FUNCTION_FILE = await readFile(`${GITHUB_WORKSPACE}/${FUNCTION_FILE_PATH}`).catch((err) => {
     throw new Error(`Your function file is not in build folder '${FUNCTION_FILE_PATH}', please check your code!`);
   });
