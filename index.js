@@ -35,7 +35,7 @@ const execute = async () => {
 
   //   read files
   let FUNCTION_ARGS = {};
-  await readFile(`${GITHUB_WORKSPACE}/${FUNCTION_ARGS_PATH}`).catch((err) => {
+  FUNCTION_ARGS = await readFile(`${GITHUB_WORKSPACE}/${FUNCTION_ARGS_PATH}`).catch((err) => {
     FUNCTION_ARGS = {};
   });
 
