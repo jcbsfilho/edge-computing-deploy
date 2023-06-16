@@ -46,7 +46,7 @@ Personal token created in RTM Azion.
 
 ### `commitConfig`
 
-default: false
+default: true
 
 Boolean to commit the settings for a new deploy.
 Settings: domain id, edge application id, function id.

@@ -31,7 +31,7 @@ const execute = async () => {
   const FUNCTION_FILE_PATH = INPUT_FUNCTIONFILEPATH || "worker/function.js";
   const FUNCTION_ARGS_PATH = INPUT_FUNCTIONARGSFILEPATH || "args.json";
   const CONFIG_FILE_PATH = INPUT_CONFIGFILEPATH || "azion/azion.json";
-  const COMMIT = INPUT_COMMITCONFIG === "true" ? true : false;
+  const COMMIT = `${INPUT_COMMITCONFIG}` === "true" ? true : false;
 
   //   read files
   let FUNCTION_ARGS = {};
