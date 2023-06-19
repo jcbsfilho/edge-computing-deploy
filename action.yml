@@ -3,7 +3,7 @@ description: 'This action was created to help deploy an edge application at Azio
 inputs:
   applicationName:
     description: 'Application Name'
-    required: true
+    required: false
   azionPersonalToken:
     description: 'Azion Personal Token'
     required: true

@@ -25,13 +25,20 @@ const {
 
 // ENV GITHUB
 
-const { GITHUB_WORKSPACE } = process.env;
+const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
 
 const execute = async () => {
   const FUNCTION_FILE_PATH = INPUT_FUNCTIONFILEPATH || "worker/function.js";
   const FUNCTION_ARGS_PATH = INPUT_FUNCTIONARGSFILEPATH || "args.json";
   const CONFIG_FILE_PATH = INPUT_CONFIGFILEPATH || "azion/azion.json";
   const COMMIT = `${INPUT_COMMITCONFIG}` === "true" ? true : false;
+
+  let APPLICATION_NAME_VALID = INPUT_APPLICATIONNAME;
+
+  if (!INPUT_APPLICATIONNAME) {
+    const [_, REPO_NAME] = GITHUB_REPOSITORY.split("/");
+    APPLICATION_NAME_VALID = REPO_NAME;
+  }
 
   //   read files
   let FUNCTION_ARGS = {};
@@ -59,7 +66,7 @@ const execute = async () => {
     const { results: resCreateApp } = await createEdgeApplication(
       URL_API_AZION,
       INPUT_AZIONPERSONALTOKEN,
-      { application: { name: INPUT_APPLICATIONNAME } },
+      { application: { name: APPLICATION_NAME_VALID } },
       FUNCTION_FILE,
       FUNCTION_ARGS
     );
@@ -70,7 +77,7 @@ const execute = async () => {
         file: FUNCTION_FILE_PATH,
       },
     };
-    configFile = resCreateApp
+    configFile = resCreateApp;
     configFile.function = Object.assign(configFile.function, functionObj.function);
   } else {
     logInfo("Starting Update Application!");
