@@ -13,7 +13,7 @@ There is an example template in this repository:
 ```yml
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v3.0.4
+  uses: jcbsfilho/edge-computing-deploy@v3.1.0
   with:
     applicationName: "my-edge"
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
