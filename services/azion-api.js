@@ -41,20 +41,24 @@ const requestApi = async (baseurl, path, method, input, token) => {
 
       res.on("error", (err) => {
         if (res.statusCode < 200 || res.statusCode > 299) {
-          const message = responseBody || `HTTP status code ${res.statusCode}`;
+          const message = responseBody || res?.statusMessage || 'Error undefined'
           try {
-            const results = JSON.parse(responseBody);
-            return reject({ message, results, status: res.statusCode });
+            let results = {}
+            if(responseBody){
+              results = JSON.parse(responseBody);
+            }
+            return reject({ message: `${message} - ${path}`, results, status: res.statusCode });
           } catch (error) {
-            return reject({ message, results: {}, status: res.statusCode });
+            return reject({ message: `${message} - ${path}`, results: {}, status: res.statusCode });
           }
         }
       });
 
-      res.on("end", () => {
+      res.on("end", (err) => {
         try {
           if (res?.statusCode < 200 || res?.statusCode >= 300) {
-            return reject(new Error(responseBody));
+            const message = responseBody || res?.statusMessage || 'Error undefined'
+            return reject({ message: `${message} - ${path}` });
           }
           if (responseBody) {
             const { results } = JSON.parse(responseBody);
