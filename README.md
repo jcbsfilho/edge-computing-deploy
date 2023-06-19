@@ -82,6 +82,14 @@ file to save the id's information (edge application, function, domain)
 
 **Optional**
 
+### `applicationAcceleration`
+
+default: false
+
+Enable Application Acceleration to this site to use advanced rules engine, advanced cache key, bypass cache, forward cookies or support to proxy methods (post/put/patch/delete). * please check the costs.
+
+**Optional**
+
 ## Outputs
 
 ### `applicationId`

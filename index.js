@@ -21,6 +21,7 @@ const {
   INPUT_FUNCTIONFILEPATH,
   INPUT_FUNCTIONARGSFILEPATH,
   INPUT_CONFIGFILEPATH,
+  INPUT_APPLICATIONACCELERATION,
 } = process.env;
 
 // ENV GITHUB
@@ -32,6 +33,7 @@ const execute = async () => {
   const FUNCTION_ARGS_PATH = INPUT_FUNCTIONARGSFILEPATH || "args.json";
   const CONFIG_FILE_PATH = INPUT_CONFIGFILEPATH || "azion/azion.json";
   const COMMIT = `${INPUT_COMMITCONFIG}` === "true" ? true : false;
+  const APPLICATION_ACCELERATION = `${INPUT_APPLICATIONACCELERATION}` === "true" ? true : false;
 
   let APPLICATION_NAME_VALID = INPUT_APPLICATIONNAME;
 
@@ -68,7 +70,8 @@ const execute = async () => {
       INPUT_AZIONPERSONALTOKEN,
       { application: { name: APPLICATION_NAME_VALID } },
       FUNCTION_FILE,
-      FUNCTION_ARGS
+      FUNCTION_ARGS,
+      { acceleration: APPLICATION_ACCELERATION }
     );
     const functionObj = {
       function: {
@@ -126,15 +129,16 @@ const makeOutput = async (workdir, key, value) => {
  * @param {object} config
  * @param {string} functionPath
  * @param {string} functionArgs
+ * @param {object} modules { acceleration: true }
  * @returns
  */
-const createEdgeApplication = async (url, token, config, functionFile, functionArgs) => {
+const createEdgeApplication = async (url, token, config, functionFile, functionArgs, modules) => {
   const inputCreateApplication = { name: config.application.name };
   const resultCreateEdgeApplication = await apiAzion.createEdgeApplication(url, inputCreateApplication, token);
   logInfo("Edge Application created!");
   const { results: resultEdgeApplication } = resultCreateEdgeApplication || {};
 
-  const inputPathApplication = { edge_functions: true };
+  const inputPathApplication = { edge_functions: true, application_acceleration: modules.acceleration };
   await apiAzion.patchEdgeApplication(url, resultEdgeApplication?.id, inputPathApplication, token);
 
   //   create function
