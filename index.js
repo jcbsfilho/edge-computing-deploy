@@ -205,6 +205,22 @@ const updateEdgeApplication = async (url, token, config, functionFile, functionA
   const inputFunction = { id: config?.function?.id, name: config?.application.name, code: codeRaw, args: functionArgs };
   const { results: resFunction } = await apiAzion.patchFunction(url, inputFunction, token);
 
+  try {
+    const { results: resInstance } = await apiAzion.getInstanceEdgeApplication(url, config?.application.id, token);
+    const instanceFunction = resInstance.find((item) => item.edge_function_id === resFunction?.id);
+
+    const inputInstanceUpdate = { functionId: resFunction?.id, args: functionArgs };
+    await apiAzion.patchInstanceEdgeApplication(
+      url,
+      config?.application?.id,
+      instanceFunction?.id,
+      inputInstanceUpdate,
+      token
+    );
+  } catch (error) {
+    logInfo('There was a problem updating the instance arguments')
+  }
+
   const results = {
     function: {
       id: resFunction?.id,

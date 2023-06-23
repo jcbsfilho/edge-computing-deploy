@@ -192,6 +192,47 @@ const createInstanceEdgeApplication = async (baseurl, applicationId, input, toke
   );
 };
 
+
+/**
+ * get instance to edge application
+ * @param {string} baseurl base url
+ * @param {string} applicationId edge application id
+ * @param {string} token azion personal token
+ * @returns
+ */
+const getInstanceEdgeApplication = async (baseurl, applicationId, token) => {
+  return requestApi(
+    baseurl,
+    `/edge_applications/${applicationId}/functions_instances`,
+    "GET",
+    null,
+    token
+  );
+};
+
+/**
+ * patch instance to edge application
+ * @param {string} baseurl base url
+ * @param {string} applicationId edge application id
+ * @param {string} functionInstanceId function instance id
+ * @param {object} input input body
+ * @param {string} token azion personal token
+ * @returns
+ */
+const patchInstanceEdgeApplication = async (baseurl, applicationId, functionInstanceId, input, token) => {
+  const postData = {
+    edge_function_id: input?.functionId,
+    args: input?.args || {},
+  };
+  return requestApi(
+    baseurl,
+    `/edge_applications/${applicationId}/functions_instances/${functionInstanceId}`,
+    "PATCH",
+    postData,
+    token
+  );
+};
+
 /**
  * create domain to edge application
  * @param {string} baseurl base url
@@ -256,4 +297,6 @@ module.exports = {
   createInstanceEdgeApplication,
   createFunction,
   patchFunction,
+  patchInstanceEdgeApplication,
+  getInstanceEdgeApplication
 };
