@@ -3,29 +3,26 @@
 This action was created to help deploy an edge application at Azion.
 To use it, you need to create an account at [Azion](https://manager.azion.com/signup/) and use configuration files.
 
-
 There is an example template in this repository:
 
-- [Example](https://github.com/jcbsfilho/edge-upstash-geolocation)
+- [Example](https://github.com/jcbsfilho/azion-samples)
 
 ## Example usage
 
 ```yml
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v3.1.0
+  uses: jcbsfilho/edge-computing-deploy@v4.0.0
   with:
-    applicationName: "my-edge"
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
-    commitConfig: true
-    functionFilePath: 'worker/function.js'
-    functionArgsFilePath: 'args.json'
-    configFilePath: 'azion/azion.json'
+    functionArgsFilePath: "args.json"
+    buildPreset: "angular"
+    buildMode: "deliver"
 
 - name: Get the output Azion Edge Deploy
   run: |
     echo "Application ID-= ${{ steps.azion_edge.outputs.applicationId }}"
-
+    echo "Domain-= ${{ steps.azion_edge.outputs.domainUrl }}"
 ```
 
 ## Inputs
@@ -44,25 +41,6 @@ Personal token created in RTM Azion.
 
 **Required**
 
-### `commitConfig`
-
-default: true
-
-Boolean to commit the settings for a new deploy.
-Settings: domain id, edge application id, function id.
-
-**Optional**
-
-> **Note**: if your branch is protected this setting needs to be manually saved in your repo.
-
-### `functionFilePath`
-
-default: `worker/function.js`
-
-your function's file path
-
-**Optional**
-
 ### `functionArgsFilePath`
 
 default: `args.json`
@@ -74,24 +52,59 @@ Indicated to be generated in your build.
 
 **Optional**
 
-### `configFilePath`
+### `buildPreset`
 
-default: `azion/azion.json`
+Build preset by Vulcan ex: angular
 
-file to save the id's information (edge application, function, domain)
+```bash
 
-**Optional**
+  azioncli edge_applications ls
 
-### `applicationAcceleration`
+  PRESET      MODE     
+  Html        Deliver  
+  Javascript  Compute  
+  Typescript  Compute  
+  Angular     Deliver  
+  Astro       Deliver  
+  Hexo        Deliver  
+  Next        Deliver  
+  React       Deliver  
+  Vue         Deliver 
 
-default: false
+```
 
-Enable Application Acceleration to this site to use advanced rules engine, advanced cache key, bypass cache, forward cookies or support to proxy methods (post/put/patch/delete). * please check the costs.
+**Required**
 
-**Optional**
+
+### `buildMode`
+
+Build mode by Vulcan ex: deliver
+
+```bash
+
+  azioncli edge_applications ls
+
+  PRESET      MODE     
+  Html        Deliver  
+  Javascript  Compute  
+  Typescript  Compute  
+  Angular     Deliver  
+  Astro       Deliver  
+  Hexo        Deliver  
+  Next        Deliver  
+  React       Deliver  
+  Vue         Deliver 
+
+```
+
+**Required**
 
 ## Outputs
 
 ### `applicationId`
 
 Edge Application ID
+
+### `domainUrl`
+
+Edge Application Domain

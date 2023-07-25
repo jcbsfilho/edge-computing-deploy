@@ -1,0 +1,21 @@
+{
+  "name": "edge-computing-deploy",
+  "version": "1.0.0",
+  "description": "This action was created to help deploy an edge application at Azion.",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "edge",
+    "edge computing",
+    "deploy",
+    "build"
+  ],
+  "author": "jcbsfilho",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

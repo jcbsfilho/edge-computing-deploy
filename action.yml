@@ -7,33 +7,27 @@ inputs:
   azionPersonalToken:
     description: 'Azion Personal Token'
     required: true
-  commitConfig:
-    description: 'Commit config azion'
-    required: false
-    default: true
-  functionFilePath:
-    description: 'Path function file ex: worker/function.js'
-    required: false
-    default: 'worker/function.js'
   functionArgsFilePath:
     description: 'Path function args file ex: args.json' # no commit this file
     required: false
     default: 'args.json'
-  configFilePath:
-    description: 'Path config file ex: azion/azion.json'
+  buildPreset:
+    description: 'build Preset'
+    required: true
+  buildMode:
+    description: 'build Mode'
     required: false
-    default: 'azion/azion.json'
-  applicationAcceleration:
-    description: 'Enable Application Acceleration to this site to use advanced rules engine, advanced cache key, bypass cache, forward cookies or support to proxy methods (post/put/patch/delete).'
-    required: false
-    default: false  
+    default: 'deliver'
+
 
 outputs:
   applicationId:
-    description: 'Return application id'  
+    description: 'Return application id'
+
 runs:
-  using: 'node16'
-  main: 'index.js'
+  using: 'docker'
+  image: 'docker://josebsf/edge-computing-deploy:latest'
+  
 
 branding:
   icon: cloud-lightning
