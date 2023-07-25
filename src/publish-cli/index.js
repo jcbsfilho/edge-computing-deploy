@@ -26,7 +26,7 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   // change args path
   let azionConfig = await verifyConfig(sourceCode.path, sourceCode.configPath);
   azionConfig.function.args = sourceCode.functionArgsPath;
-  const isUpdateDeploy = azionConfig?.application?.id !== 0;
+  const isUpdateDeploy = azionConfig?.application?.id === 0;
 
   await writeFileJSON(`${sourceCode.path}/${sourceCode.configPath}`, azionConfig);
 
@@ -42,12 +42,13 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   azionConfig.domain.url = urlDomain;
 
   // PURGE
-  if (isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
+  if (urlDomain && !isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
+    const [_, domain] = urlDomain.split("//")
     logInfo(`purge domain`);
-    await purge(url, "url", { urls: [`${azionConfig.domain.url}/`] }, null, token).catch((err) =>
+    await purge(url, "url", { urls: [`${domain}`, `${domain}/`, `${domain}/index.html`] }, null, token).catch((err) =>
       logInfo("problem to purge domain url")
     );
-    await purge(url, "wildcard", { urls: [`${azionConfig.domain.url}/*`] }, null, token).catch((err) =>
+    await purge(url, "wildcard", { urls: [`${domain}/*`] }, null, token).catch((err) =>
       logInfo("problem to purge domain wildcard")
     );
   }

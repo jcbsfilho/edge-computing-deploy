@@ -399,6 +399,7 @@ const purge = async (baseurl, type, input, cookie, token) => {
   const postData = {
     urls: input.urls,
     method: "delete",
+    layer: "edge_caching"
   };
   return requestApi(
     baseurl,
