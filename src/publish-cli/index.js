@@ -1,11 +1,5 @@
 import { purge } from "../services/azion-api.js";
-import {
-  commitAutomation,
-  execCommandWithPath,
-  parseJsonFile,
-  readFile,
-  writeFileJSON,
-} from "../util/common.js";
+import { commitAutomation, execCommandWithPath, parseJsonFile, readFile, writeFileJSON } from "../util/common.js";
 import { logInfo } from "../util/logger.js";
 import * as dotenv from "dotenv";
 
@@ -32,17 +26,11 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   // change args path
   let azionConfig = await verifyConfig(sourceCode.path, sourceCode.configPath);
   azionConfig.function.args = sourceCode.functionArgsPath;
-  const isUpdateDeploy = azionConfig?.application?.id !== 0
+  const isUpdateDeploy = azionConfig?.application?.id !== 0;
 
-  await writeFileJSON(
-    `${sourceCode.path}/${sourceCode.configPath}`,
-    azionConfig
-  );
+  await writeFileJSON(`${sourceCode.path}/${sourceCode.configPath}`, azionConfig);
 
-  const { stdout: resultPublish } = await execCommandWithPath(
-    sourceCode.path,
-    `azioncli edge_applications publish`
-  );
+  const { stdout: resultPublish } = await execCommandWithPath(sourceCode.path, `azioncli edge_applications publish`);
 
   logInfo("deploy done!");
 
@@ -56,22 +44,16 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   // PURGE
   if (isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
     logInfo(`purge domain`);
-    await purge(
-      url,
-      "wildcard",
-      { urls: [`${azionConfig.domain.url}/*`] },
-      null,
-      token
-    ).catch((err) => logInfo("problem to purge domain"));
+    await purge(url, "url", { urls: [`${azionConfig.domain.url}/`] }, null, token).catch((err) =>
+      logInfo("problem to purge domain url")
+    );
+    await purge(url, "wildcard", { urls: [`${azionConfig.domain.url}/*`] }, null, token).catch((err) =>
+      logInfo("problem to purge domain wildcard")
+    );
   }
 
   // commit azion config
-  await commitAutomation(
-    sourceCode.path,
-    sourceCode.configPath,
-    azionConfig,
-    true
-  );
+  await commitAutomation(sourceCode.path, sourceCode.configPath, azionConfig, true);
 
   dotenv.config({ path: sourceCode.versionBuildPath });
   azionConfig["version-id"] = process.env.VERSION_ID;
@@ -86,12 +68,10 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
  * @returns
  */
 const verifyConfig = async (sourceCodePath, configPath) => {
-  let config = await readFile(`${sourceCodePath}/${configPath}`).catch(
-    (err) => {
-      // file not exist
-      logInfo("config azion not exist, create new edge application");
-    }
-  );
+  let config = await readFile(`${sourceCodePath}/${configPath}`).catch((err) => {
+    // file not exist
+    logInfo("config azion not exist, create new edge application");
+  });
   if (config) {
     config = parseJsonFile(config);
   }
