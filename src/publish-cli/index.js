@@ -54,7 +54,7 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   azionConfig.domain.url = urlDomain;
 
   // PURGE
-  if (!isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
+  if (isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
     logInfo(`purge domain`);
     await purge(
       url,
