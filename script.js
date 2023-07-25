@@ -94,6 +94,7 @@ const main = async () => {
     info: { application: { name: APPLICATION_NAME_VALID } },
     buildPreset: INPUT_BUILDPRESET,
     buildMode: INPUT_BUILDMODE,
+    staticsPath: ".edge/statics"
   };
 
   const resultPublish = await publishOrUpdateCLI(

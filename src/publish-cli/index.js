@@ -1,5 +1,5 @@
 import { purge } from "../services/azion-api.js";
-import { commitAutomation, execCommandWithPath, parseJsonFile, readFile, writeFileJSON } from "../util/common.js";
+import { commitAutomation, execCommandWithPath, execSpawn, parseJsonFile, readFile, writeFileJSON } from "../util/common.js";
 import { logInfo } from "../util/logger.js";
 import * as dotenv from "dotenv";
 
@@ -14,9 +14,9 @@ import * as dotenv from "dotenv";
  * @param {string} sourceCode.functionPath
  * @param {string} sourceCode.functionArgsPath
  * @param {string} sourceCode.versionBuildPath
- * @param {boolean} sourceCode.isImport
  * @param {string} sourceCode.buildPreset
  * @param {string} sourceCode.buildMode
+ * @param {string} sourceCode.staticsPath
  * @param {*} sourceCode.info
  * @returns {Promise}
  */
@@ -28,38 +28,44 @@ const publishOrUpdateCLI = async (url, token, sourceCode) => {
   azionConfig.function.args = sourceCode.functionArgsPath;
   const isUpdateDeploy = azionConfig?.application?.id === 0;
 
+  // TODO: fix because the cli expects the statics folder when using the Vulcan type
+  if(sourceCode?.buildMode === "compute"){
+    await readFile(`${sourceCode.path}/${sourceCode.staticsPath}`).catch(async (err) => {
+      logInfo("created folder!")
+      await execCommandWithPath(sourceCode.path, `mkdir -p ${sourceCode.staticsPath}`)
+    })
+  }
+
   await writeFileJSON(`${sourceCode.path}/${sourceCode.configPath}`, azionConfig);
 
-  const { stdout: resultPublish } = await execCommandWithPath(sourceCode.path, `azioncli edge_applications publish`);
+  const debug = `${isUpdateDeploy ? "--debug" : ""}`
+  const resultPublish = await execSpawn(sourceCode.path, `azioncli edge_applications publish ${debug}`);
 
   logInfo("deploy done!");
 
   // load config
-  azionConfig = await verifyConfig(sourceCode.path, sourceCode.configPath);
+  let azionConfigResult = await verifyConfig(sourceCode.path, sourceCode.configPath);
 
   const [urlDomain] = resultPublish?.match(/\bhttps?:\/\/\S+/gi);
 
-  azionConfig.domain.url = urlDomain;
+  azionConfigResult.domain.url = urlDomain;
 
   // PURGE
-  if (urlDomain && !isUpdateDeploy && azionConfig["rt-purge"]?.purge_on_publish) {
+  if (urlDomain && !isUpdateDeploy && azionConfigResult["rt-purge"]?.purge_on_publish) {
     const [_, domain] = urlDomain.split("//")
     logInfo(`purge domain`);
-    await purge(url, "url", { urls: [`${domain}`, `${domain}/`, `${domain}/index.html`] }, null, token).catch((err) =>
+    await purge(url, "url", { urls: [`${domain}`, `${domain}/`] }, null, token).catch((err) =>
       logInfo("problem to purge domain url")
-    );
-    await purge(url, "wildcard", { urls: [`${domain}/*`] }, null, token).catch((err) =>
-      logInfo("problem to purge domain wildcard")
     );
   }
 
   // commit azion config
-  await commitAutomation(sourceCode.path, sourceCode.configPath, azionConfig, true);
+  await commitAutomation(sourceCode.path, sourceCode.configPath, azionConfigResult, true);
 
   dotenv.config({ path: sourceCode.versionBuildPath });
-  azionConfig["version-id"] = process.env.VERSION_ID;
+  azionConfigResult["version-id"] = process.env.VERSION_ID;
 
-  return Promise.resolve(azionConfig);
+  return Promise.resolve(azionConfigResult);
 };
 
 /**
