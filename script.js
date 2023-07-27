@@ -1,15 +1,8 @@
 #!/usr/bin/env node
 
-import {
-  execSpawn,
-  makeOutput,
-  parseJsonFile,
-  readFile,
-  writeFileJSON,
-} from "./src/util/common.js";
-import { initOrLoad } from "./src/init/index.js";
-import { logColor, logConsole, logFailure, logInfo, logSuccess } from "./src/util/logger.js";
-import { publishOrUpdateCLI } from "./src/publish-cli/index.js";
+import { execSpawn, existsFolder, makeOutput, parseJsonFile, readFile, writeFileJSON } from "./src/util/common.js";
+import messages from "./src/util/message-log.js";
+import { publishOrUpdate } from "./src/publish/index.js";
 
 /**
  * environments
@@ -23,7 +16,7 @@ const {
   INPUT_BUILDPRESET,
   INPUT_BUILDMODE,
   INPUT_BUILDCODEENTRY,
-  _ENVIRONMENT,
+  INPUT_EDGEMODULEACCELERATION,
 } = process.env;
 
 // ENV GITHUB
@@ -32,7 +25,7 @@ const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
 /**
  * constants
  */
-const BASE_URL_AZION_API = _ENVIRONMENT === "production" ? "api-origin.azionapi.net" : "stage-api-origin.azion.net";
+const BASE_URL_AZION_API = "api-origin.azionapi.net";
 
 /**
  * main function where you run the script
@@ -40,49 +33,56 @@ const BASE_URL_AZION_API = _ENVIRONMENT === "production" ? "api-origin.azionapi.
  */
 const main = async () => {
   // create initial log
-  logInfo("Azion Edge Computing");
-  logInfo("Build and Deploy applications on the Edge with Azion.");
-  logInfo(`Preset · ${INPUT_BUILDPRESET}`);
+  messages.yellow("JAMStack Azion Deployment");
+  messages.textOnly("Build and Deploy applications on the Edge with Azion");
+  messages.textOnly(`Preset · ${INPUT_BUILDPRESET}`);
 
   let APPLICATION_NAME_VALID = INPUT_APPLICATIONNAME;
 
   if (!INPUT_APPLICATIONNAME) {
-    const [_, REPO_NAME] = GITHUB_REPOSITORY.split("/");
+    const [_, REPO_NAME] = GITHUB_REPOSITORY?.split("/");
     APPLICATION_NAME_VALID = REPO_NAME;
   }
 
   // init repo or load repo
+  messages.init.yellow("INIT SCRIPT");
+  messages.init.await("initialize repository");
   const azionConfigPath = `azion/azion.json`;
-  const { sourceCodePath } = await initOrLoad(
-    GITHUB_WORKSPACE,
-    GITHUB_REPOSITORY,
-    {
-      applicationName: APPLICATION_NAME_VALID,
-      buildPreset: INPUT_BUILDPRESET,
-      buildMode: INPUT_BUILDMODE,
-      path: azionConfigPath,
-      buildEntry: INPUT_BUILDCODEENTRY
-    },
-    INPUT_AZIONPERSONALTOKEN
-  );
+  const sourceCodePath = GITHUB_WORKSPACE;
+  messages.init.complete("initialize repository");
 
-  // build code by vulcan preset
-  logColor("white", "gray", "Build Code", "🗄");
-  logInfo("This process may take a few minutes!");
-  await execSpawn(sourceCodePath, `azioncli edge_applications build`);
-  logSuccess("build code done!");
+  // // install libs if not exist
+  await existsFolder(`${sourceCodePath}/node_modules`).catch(async (err) => {
+    messages.prebuild.yellow("INSTALL DEPENDENCIES");
+    messages.prebuild.await("This process may take a few minutes!");
+    await execSpawn(sourceCodePath, "yarn");
+    messages.prebuild.complete("install dependencies");
+  });
+
+  // // build code by vulcan preset
+  messages.build.yellow("BUILD CODE BY VULCAN");
+  const BUILD_MODE_VALID = INPUT_BUILDMODE || "deliver";
+  let buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID}`;
+  if (BUILD_MODE_VALID === "compute") {
+    const entry = `${INPUT_BUILDCODEENTRY || "./main.js"}`;
+    buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID} --entry ${entry}`;
+  }
+  await execSpawn(sourceCodePath, buildCmd);
+  messages.build.complete("building code");
 
   // publish
-  logColor("white", "gray", "Deploy", "🚀");
+  messages.deploy.yellow("DEPLOY ON EDGE");
   const workerFunctionPath = `${sourceCodePath}/.edge/worker.js`;
   const workerArgsPath = `${INPUT_FUNCTIONARGSFILEPATH}`;
   const versionBuildPath = `${sourceCodePath}/.edge/.env`;
 
   // create args to function
-  const ARGS_FUNCTION = await readFile(`${sourceCodePath}/${workerArgsPath}`).catch((err) => logInfo('Fail load args file'))
+  const ARGS_FUNCTION = await readFile(`${sourceCodePath}/${workerArgsPath}`).catch((err) => messages.prebuild.info("Fail load args file"));
   const ARGS_FUNCTION_VALID = ARGS_FUNCTION || "{}";
   await writeFileJSON(`${sourceCodePath}/${workerArgsPath}`, parseJsonFile(ARGS_FUNCTION_VALID));
 
+  // enable modules
+  const EDGE_MODULE_ACCELERATION_VALID = !!INPUT_EDGEMODULEACCELERATION;
 
   // publish or update
   const inputSourceCode = {
@@ -94,28 +94,31 @@ const main = async () => {
     info: { application: { name: APPLICATION_NAME_VALID } },
     buildPreset: INPUT_BUILDPRESET,
     buildMode: INPUT_BUILDMODE,
-    staticsPath: ".edge/statics"
   };
 
-  const resultPublish = await publishOrUpdateCLI(
+  const resultPublish = await publishOrUpdate(
     BASE_URL_AZION_API,
     INPUT_AZIONPERSONALTOKEN,
+    { acceleration: EDGE_MODULE_ACCELERATION_VALID },
     inputSourceCode
   );
+  messages.deploy.complete("deploy");
+  messages.deploy.deployed("Edge Application");
 
-  logConsole(`@@@@@@ Name: ${resultPublish?.name}`);
-  logConsole(`@@@@@@ Domain: ${resultPublish?.domain?.url}`);
-  logConsole(`@@@@@@ Domain ID: ${resultPublish?.domain?.id}`);
-  logConsole(`@@@@@@ Edge Application ID: ${resultPublish?.application?.id}`);
-  logConsole(`@@@@@@ Function ID: ${resultPublish?.function?.id}`);
+  messages.yellow("DEPLOY INFO");
+  messages.textOnly(`Name: ${resultPublish?.application?.name}`);
+  messages.textOnly(`Domain: https://${resultPublish?.domain?.url}`);
+  messages.textOnly(`Domain ID: ${resultPublish?.domain?.id}`);
+  messages.textOnly(`Edge Application ID: ${resultPublish?.application?.id}`);
+  messages.textOnly(`Function ID: ${resultPublish?.function?.id}`);
+
   if (resultPublish?.["version-id"]) {
-    logConsole(`@@@@@@ Version ID: ${resultPublish?.["version-id"]}`);
+    messages.textOnly(`Version ID: ${resultPublish?.["version-id"]}`);
   }
 
   // SET OUTPUT
   await makeOutput(GITHUB_WORKSPACE, "applicationId", resultPublish?.application?.id);
   await makeOutput(GITHUB_WORKSPACE, "domainUrl", resultPublish?.domain?.url);
-
 };
 
 /**
@@ -123,9 +126,9 @@ const main = async () => {
  */
 main()
   .catch((err) => {
-    logFailure(err?.message);
+    messages.error(err?.message);
+    process.exit(1);
   })
   .finally(async () => {
-    // remove personal token when error
-    logSuccess("Done!");
+    messages.complete("finally script");
   });

@@ -64,7 +64,7 @@ const logConsole = (message) => {
  * @param {string} message 
  */
 const logInfo = (message) => {
-  console.info(`⚡️  info       ${message}`);
+  console.info(`ℹ  info       ${message}`);
 };
 
 /**

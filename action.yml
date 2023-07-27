@@ -1,33 +1,41 @@
-name: 'edge-computing-deploy'
-description: 'This action was created to help deploy an edge application at Azion.'
+name: "edge-computing-deploy"
+description: "This action was created to help deploy an edge application at Azion."
 inputs:
   applicationName:
-    description: 'Application Name'
+    description: "Application Name"
     required: false
   azionPersonalToken:
-    description: 'Azion Personal Token'
+    description: "Azion Personal Token"
     required: true
   functionArgsFilePath:
-    description: 'Path function args file ex: args.json' # no commit this file
+    description: "Path function args file ex: args.json" # no commit this file
     required: false
-    default: 'args.json'
+    default: "args.json"
   buildPreset:
-    description: 'build Preset'
+    description: "build Preset"
     required: true
   buildMode:
-    description: 'build Mode'
+    description: "build Mode"
     required: false
-    default: 'deliver'
-
+    default: "deliver"
+  buildEntry:
+    description: "build Entry"
+    required: false
+    default: "./main.js"
+  edgeModuleAcceleration:
+    description: "enable module acceleration"
+    required: false
+    default: false  
 
 outputs:
   applicationId:
-    description: 'Return application id'
+    description: "Return application id"
+  domainUrl:
+    description: "Return edge domain url"  
 
 runs:
-  using: 'docker'
-  image: 'docker://josebsf/edge-computing-deploy:latest'
-  
+  using: "docker"
+  image: 'docker://josebsf/gh-actions-edge-computing-deploy:jam-5.0.0'
 
 branding:
   icon: cloud-lightning

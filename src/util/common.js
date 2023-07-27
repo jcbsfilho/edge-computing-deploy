@@ -1,8 +1,10 @@
 import * as util from "node:util";
 import * as child from "node:child_process";
+import * as fs from "node:fs/promises";
 const exec = util.promisify(child.exec);
 import { writeFile, readFile as _readFile } from "fs/promises";
-import { logFailure, logInfo } from "./logger.js";
+import { logInfo } from "./logger.js";
+import messages from "./message-log.js";
 
 /**
  * Extract and verify github url
@@ -15,40 +17,6 @@ const extractGitHubRepoPath = (url) => {
   if (!path) return {};
   const [repoOwner, repoName] = path.split("/");
   return { repoOwner, repoName };
-};
-
-/**
- * error handler, create the json output for the result
- * @param {string} message
- * @returns {Promise}
- */
-const errorHandler = async (message) => {
-  logFailure(message)
-  const error = { error: true, message };
-  return writeFile("/results/output.json", JSON.stringify(error));
-};
-
-/**
- * success handler, create the json output for the result
- * @param {*} body
- * @returns {Promise}
- */
-const resultHandler = async (body) => {
-  return writeFile("/results/output.json", JSON.stringify(body));
-};
-
-/**
- *
- * @param {string} repositoryUrl repository url
- * @param {string} ghToken github personal token
- * @param {string} repoOwner repository owner
- * @param {string} repoName repository name
- * @returns {Promise}
- */
-const gitCloneRepository = async (repositoryUrl, ghToken, repoOwner, repoName) => {
-  const urlWithToken = repositoryUrl.replace("https://", `https://${ghToken}@`);
-  await exec(`git clone ${urlWithToken} repos/${repoOwner}/${repoName}`);
-  return Promise.resolve(`repos/${repoOwner}/${repoName}`);
 };
 
 /**
@@ -116,7 +84,7 @@ const commitAutomation = async (sourceCodePath, pathFile, content, commit) => {
       git push || echo 'no changes to push'
       `
     );
-    logInfo(`Commit configuration '${pathFile}'!`);
+    messages.success(`Commit configuration '${pathFile}'!`);
   }
   return Promise.resolve(true);
 };
@@ -198,11 +166,17 @@ const makeOutput = async (workdir, key, value) => {
   }
 };
 
+/**
+ * 
+ * @param {string} path 
+ * @returns 
+ */
+const existsFolder = async (path) => {
+  return await fs.opendir(path)
+}
+
 export {
   extractGitHubRepoPath,
-  errorHandler,
-  resultHandler,
-  gitCloneRepository,
   execCommandWithPath,
   readFile,
   writeFileJSON,
@@ -212,4 +186,5 @@ export {
   parseJsonFile,
   execSpawn,
   makeOutput,
+  existsFolder,
 };

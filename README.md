@@ -5,14 +5,16 @@ To use it, you need to create an account at [Azion](https://manager.azion.com/si
 
 There is an example template in this repository:
 
-- [Example](https://github.com/jcbsfilho/azion-samples)
+- [Azion Templates](https://github.com/jcbsfilho/azion-samples/tree/dev/templates)
 
 ## Example usage
+
+In this example below using the template [Angular Boilerplate](https://github.com/jcbsfilho/azion-samples/tree/dev/templates/angular-boilerplate)
 
 ```yml
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v4.0.0
+  uses: jcbsfilho/edge-computing-deploy@v5.0.0
   with:
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
     functionArgsFilePath: "args.json"
@@ -98,6 +100,13 @@ Build mode by Vulcan ex: deliver
 ```
 
 **Required**
+
+
+### `edgeModuleAcceleration`
+
+Enable module acceleration [Application Acceleration](https://www.azion.com/en/documentation/products/edge-application/application-acceleration/)
+
+**Optional**
 
 ## Outputs
 
