@@ -49,7 +49,7 @@ const publishOrUpdate = async (url, token, modules, sourceCode) => {
     messages.deployUpdate.success("create edge application");
 
     if (azionConfig?.domain?.url) {
-      const [_, domain] = azionConfig.domain.url.split("//");
+      const domain = azionConfig.domain.url;
       messages.deployUpdate.await(`purge domain`);
       await apiAzion
         .purge(url, "url", { urls: [`${domain}`, `${domain}/`] }, null, token)

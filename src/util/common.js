@@ -172,7 +172,8 @@ const makeOutput = async (workdir, key, value) => {
  * @returns 
  */
 const existsFolder = async (path) => {
-  return await fs.opendir(path)
+  const dir = await fs.readdir(path)
+  return dir
 }
 
 export {
