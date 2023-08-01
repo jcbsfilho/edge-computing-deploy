@@ -4,7 +4,7 @@ import * as fs from "node:fs/promises";
 const exec = util.promisify(child.exec);
 import { writeFile, readFile as _readFile } from "fs/promises";
 import { logInfo } from "./logger.js";
-import messages from "./message-log.js";
+import { messages } from "./message-log.js";
 
 /**
  * Extract and verify github url

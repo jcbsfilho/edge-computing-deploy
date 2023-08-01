@@ -1,13 +1,65 @@
 import signale from "signale";
 
+const colorReset = `\x1b[0m`;
+const colors = {
+  black: "\u001b[30m",
+  red: "\u001b[31m",
+  green: "\u001b[32m",
+  yellow: "\u001b[33m",
+  blue: "\u001b[34m",
+  magenta: "\u001b[35m",
+  cyan: "\u001b[36m",
+  white: "\u001b[37m",
+};
+
+/**
+ * 
+ * @param {typeof colors} color 
+ * @param {*} content 
+ * @returns 
+ */
+const changeColor = (color, content) => {
+  return `${colors[color]}${content}${colorReset}`;
+};
+
 const methods = {
-  yellow: {
+  info: {
+    badge: changeColor("blue", "ℹ"),
+    label: changeColor("blue", "info"),
+    color: "blue",
+    logLevel: "info",
+  },
+  note: {
+    badge: changeColor("blue", "●"),
+    label: changeColor("blue", "note"),
+    color: "blue",
+    logLevel: "info",
+  },
+  complete: {
+    badge: changeColor("cyan", "☒"),
+    label: changeColor("cyan", "complete"),
+    color: "cyan",
+    logLevel: "info",
+  },
+  await: {
+    badge: changeColor("blue", "···"),
+    label: changeColor("blue", "awaiting"),
+    color: "blue",
+    logLevel: "info",
+  },
+  success: {
+    badge: changeColor("green", "✔"),
+    label: changeColor("green", "success"),
+    color: "green",
+    logLevel: "info",
+  },
+  title: {
     badge: "🔶",
     label: "",
     color: "yellow",
     logLevel: "info",
   },
-  blue: {
+  subtitle: {
     badge: "🔷",
     label: "",
     color: "blue",
@@ -22,13 +74,13 @@ const methods = {
   build: {
     badge: "📦",
     color: "blue",
-    label: "building",
+    label: `${colors.magenta}building${colorReset}`,
     logLevel: "info",
   },
   deployed: {
     badge: "🚀",
-    color: "green",
-    label: "deployed",
+    color: "magenta",
+    label: `${colors.magenta}deployed${colorReset}`,
     logLevel: "info",
   },
 };
@@ -40,7 +92,7 @@ const newScope = (options = {}) => {
 
 const global = new signale.Signale({ interactive: false, scope: "JAMStack", types: methods });
 
-const scopes = {
+const messages = {
   ...global,
   init: {
     ...global.scope("JAMStack", "Init"),
@@ -72,4 +124,4 @@ const scopes = {
   },
 };
 
-export default scopes;
+export { messages, changeColor };

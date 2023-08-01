@@ -2,7 +2,7 @@ import { logInfo } from "../util/logger.js";
 import * as apiAzion from "../services/azion-api.js";
 import { commitAutomation, execSpawn, generateUUID, parseJsonFile, readFile } from "../util/common.js";
 import * as dotenv from "dotenv";
-import messages from "../util/message-log.js";
+import { messages } from "../util/message-log.js";
 
 /**
  *

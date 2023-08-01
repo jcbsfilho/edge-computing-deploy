@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execSpawn, existsFolder, makeOutput, parseJsonFile, readFile, writeFileJSON } from "./src/util/common.js";
-import messages from "./src/util/message-log.js";
+import { changeColor, messages } from "./src/util/message-log.js";
 import { publishOrUpdate } from "./src/publish/index.js";
 
 /**
@@ -33,7 +33,7 @@ const BASE_URL_AZION_API = "api-origin.azionapi.net";
  */
 const main = async () => {
   // create initial log
-  messages.yellow("JAMStack Azion Deployment");
+  messages.title(changeColor("red", "JAMStack Azion Deployment"));
   messages.textOnly("Build and Deploy applications on the Edge with Azion");
   messages.textOnly(`Preset · ${INPUT_BUILDPRESET}`);
 
@@ -45,7 +45,7 @@ const main = async () => {
   }
 
   // init repo or load repo
-  messages.init.yellow("INIT SCRIPT");
+  messages.init.title("INIT SCRIPT");
   messages.init.await("initialize repository");
   const azionConfigPath = `azion/azion.json`;
   const sourceCodePath = GITHUB_WORKSPACE;
@@ -53,14 +53,14 @@ const main = async () => {
 
   // // install libs if not exist
   await existsFolder(`${sourceCodePath}/node_modules`).catch(async (err) => {
-    messages.prebuild.yellow("INSTALL DEPENDENCIES");
+    messages.prebuild.title("INSTALL DEPENDENCIES");
     messages.prebuild.await("This process may take a few minutes!");
     await execSpawn(sourceCodePath, "yarn");
     messages.prebuild.complete("install dependencies");
   });
 
   // // build code by vulcan preset
-  messages.build.yellow("BUILD CODE BY VULCAN");
+  messages.build.title("BUILD CODE BY VULCAN");
   const BUILD_MODE_VALID = INPUT_BUILDMODE || "deliver";
   let buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID}`;
   if (BUILD_MODE_VALID === "compute") {
@@ -71,7 +71,7 @@ const main = async () => {
   messages.build.complete("building code");
 
   // publish
-  messages.deploy.yellow("DEPLOY ON EDGE");
+  messages.deploy.title("DEPLOY ON EDGE");
   const workerFunctionPath = `${sourceCodePath}/.edge/worker.js`;
   const workerArgsPath = `${INPUT_FUNCTIONARGSFILEPATH}`;
   const versionBuildPath = `${sourceCodePath}/.edge/.env`;
@@ -105,7 +105,7 @@ const main = async () => {
   messages.deploy.complete("deploy");
   messages.deploy.deployed("Edge Application");
 
-  messages.yellow("DEPLOY INFO");
+  messages.title("DEPLOY INFO");
   messages.textOnly(`Name: ${resultPublish?.application?.name}`);
   messages.textOnly(`Domain: https://${resultPublish?.domain?.url}`);
   messages.textOnly(`Domain ID: ${resultPublish?.domain?.id}`);
