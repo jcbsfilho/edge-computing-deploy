@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSpawn, existsFolder, makeOutput, parseJsonFile, readFile, writeFileJSON } from "./src/util/common.js";
+import { execSpawn, existFolder, makeOutput, parseJsonFile, readFile, writeFileJSON } from "./src/util/common.js";
 import { changeColor, messages } from "./src/util/message-log.js";
 import { publishOrUpdate } from "./src/publish/index.js";
 
@@ -16,6 +16,7 @@ const {
   INPUT_BUILDPRESET,
   INPUT_BUILDMODE,
   INPUT_BUILDCODEENTRY,
+  INPUT_BUILDSTATICFOLDER,
   INPUT_EDGEMODULEACCELERATION,
 } = process.env;
 
@@ -52,7 +53,7 @@ const main = async () => {
   messages.init.complete("initialize repository");
 
   // // install libs if not exist
-  await existsFolder(`${sourceCodePath}/node_modules`).catch(async (err) => {
+  await existFolder(`${sourceCodePath}/node_modules`).catch(async (err) => {
     messages.prebuild.title("INSTALL DEPENDENCIES");
     messages.prebuild.await("This process may take a few minutes!");
     await execSpawn(sourceCodePath, "yarn");
@@ -68,6 +69,12 @@ const main = async () => {
     buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID} --entry ${entry}`;
   }
   await execSpawn(sourceCodePath, buildCmd);
+  const staticFolder = INPUT_BUILDSTATICFOLDER ? `${sourceCodePath}/${INPUT_BUILDSTATICFOLDER}` : `${sourceCodePath}/.edge/statics`
+  await existFolder(staticFolder).catch(async (err) => {
+    const msg = "folder statics not exist, problem on build"
+    messages.build.error(msg);
+    throw new Error(msg)
+  });
   messages.build.complete("building code");
 
   // publish

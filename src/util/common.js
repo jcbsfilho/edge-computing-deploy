@@ -1,6 +1,7 @@
 import * as util from "node:util";
 import * as child from "node:child_process";
 import * as fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 const exec = util.promisify(child.exec);
 import { writeFile, readFile as _readFile } from "fs/promises";
 import { logInfo } from "./logger.js";
@@ -167,14 +168,17 @@ const makeOutput = async (workdir, key, value) => {
 };
 
 /**
- * 
- * @param {string} path 
- * @returns 
+ *
+ * @param {object} path
+ * @returns
  */
-const existsFolder = async (path) => {
-  const dir = await fs.readdir(path)
-  return dir
-}
+const existFolder = async (path) => {
+  const exist = existsSync(path);
+  if(!exist){
+    throw new Error(`Folder ${path} not exist`)
+  }
+  return Promise.resolve(exist);
+};
 
 export {
   extractGitHubRepoPath,
@@ -187,5 +191,5 @@ export {
   parseJsonFile,
   execSpawn,
   makeOutput,
-  existsFolder,
+  existFolder,
 };
