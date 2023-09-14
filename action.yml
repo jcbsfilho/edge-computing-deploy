@@ -33,10 +33,9 @@ outputs:
   domainUrl:
     description: "Return edge domain url"  
 
-# because vulcan use node 18
 runs:
   using: "node20"
-  main: 'script.js'
+  main: 'dist/index.js'
 
 branding:
   icon: cloud-lightning
