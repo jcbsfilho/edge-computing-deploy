@@ -5067,34 +5067,32 @@ const parseJsonFile = (item) => {
   }
 };
 
-const execSpawn = async (path, command, interactive = false) => {
+const execSpawn = async (path, command) => {
   return new Promise((resolve, reject) => {
     const args = command.split(" ");
     const cmd = args.shift();
     let dataStr = "";
 
-    const processCmd = external_node_child_process_namespaceObject.spawn(cmd, args, { shell: true, cwd: path, stdio: interactive ? "inherit" : "pipe" });
+    const processCmd = external_node_child_process_namespaceObject.spawn(cmd, args, { shell: true, cwd: path });
 
-    if (!interactive) {
-      processCmd.stdout.on("data", (data) => {
-        dataStr = data.toString();
-        if (dataStr.length > 0) {
-          logInfo(data.toString().trim());
-        }
-      });
+    processCmd.stdout.on("data", (data) => {
+      dataStr = data.toString();
+      if (dataStr.length > 0) {
+        logInfo(data.toString().trim());
+      }
+    });
 
-      processCmd.stderr.on("data", (data) => {
-        // Some tools and libraries choose to use stderr for process logging or informational messages.
-        dataStr = data.toString();
-        if (dataStr.toLowerCase().includes("error")) {
-          logInfo(dataStr);
-        }
-      });
+    processCmd.stderr.on("data", (data) => {
+      // Some tools and libraries choose to use stderr for process logging or informational messages.
+      dataStr = data.toString();
+      if (dataStr.toLowerCase().includes("error")) {
+        logInfo(dataStr);
+      }
+    });
 
-      processCmd.on("error", (error) => {
-        reject(error);
-      });
-    }
+    processCmd.on("error", (error) => {
+      reject(error);
+    });
 
     processCmd.on("close", (code) => {
       if (code === 0) {
