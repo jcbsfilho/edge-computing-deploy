@@ -5067,41 +5067,41 @@ const parseJsonFile = (item) => {
   }
 };
 
+
 const execSpawn = async (path, command) => {
   return new Promise((resolve, reject) => {
-    const args = command.split(" ");
+    const args = command.split(' ');
     const cmd = args.shift();
-    let dataStr = "";
+    let dataStr = ""
 
     const processCmd = external_node_child_process_namespaceObject.spawn(cmd, args, { shell: true, cwd: path });
-
-    processCmd.stdout.on("data", (data) => {
-      dataStr = data.toString();
-      if (dataStr.length > 0) {
+    processCmd.stdout.on('data', (data) => {
+      dataStr = data.toString()
+      if(dataStr.length > 0){
         logInfo(data.toString().trim());
       }
     });
 
-    processCmd.stderr.on("data", (data) => {
+    processCmd.stderr.on('data', (data) => {
       // Some tools and libraries choose to use stderr for process logging or informational messages.
       dataStr = data.toString();
-      if (dataStr.toLowerCase().includes("error")) {
+      if (dataStr.toLowerCase().includes('error:')) {
         logInfo(dataStr);
       }
     });
 
-    processCmd.on("error", (error) => {
+    processCmd.on('error', (error) => {
       reject(error);
     });
 
-    processCmd.on("close", (code) => {
+    processCmd.on('close', (code) => {
       if (code === 0) {
         resolve(dataStr);
       } else {
         reject(new Error(`Command '${command}' failed with code ${code}`));
       }
     });
-  });
+  })
 };
 
 /**
@@ -5124,16 +5124,17 @@ const makeOutput = async (workdir, key, value) => {
  */
 const existFolder = async (path) => {
   const exist = (0,external_node_fs_namespaceObject.existsSync)(path);
-  if (!exist) {
-    throw new Error(`Folder ${path} not exist`);
+  if(!exist){
+    throw new Error(`Folder ${path} not exist`)
   }
   return Promise.resolve(exist);
 };
 
+
 /**
  * Remove Characters and Spaces
- * @param {string} text
- * @returns
+ * @param {string} text 
+ * @returns 
  */
 const removeCharactersAndSpaces = (text) => {
   let textNormalize = text
