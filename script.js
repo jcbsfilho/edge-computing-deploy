@@ -63,17 +63,18 @@ const main = async () => {
 
   // // build code by vulcan preset
   messages.build.title("BUILD CODE BY VULCAN");
-  messages.build.await("");
+  messages.build.await(`Running ${VULCAN_COMMAND}`);
+  messages.build.await("This process may take a few minutes!");
   const BUILD_MODE_VALID = INPUT_BUILDMODE || "deliver";
   let buildCmd = `${VULCAN_COMMAND} build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID}`;
   if (BUILD_MODE_VALID === "compute") {
     const entry = `${INPUT_BUILDENTRY || "./main.js"}`;
     buildCmd = `${VULCAN_COMMAND} build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID} --entry ${entry}`;
   }
-  await execSpawn(sourceCodePath, buildCmd, true);
+  await execSpawn(sourceCodePath, buildCmd);
   const staticFolder = INPUT_BUILDSTATICFOLDER ? `${sourceCodePath}/${INPUT_BUILDSTATICFOLDER}` : `${sourceCodePath}/.edge/storage`
   await existFolder(staticFolder).catch(async (err) => {
-    const msg = "folder statics not exist, problem on build"
+    const msg = `folder ${staticFolder} not exist, problem on build`
     throw new Error(msg)
   });
   messages.build.complete("building code");
