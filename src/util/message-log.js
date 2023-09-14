@@ -83,6 +83,12 @@ const methods = {
     label: `${colors.magenta}deployed${colorReset}`,
     logLevel: "info",
   },
+  error: {
+    badge: changeColor("red", "✖"),
+    label: changeColor("red", "error"),
+    color: "red",
+    logLevel: "info",
+  },
 };
 
 const newScope = (options = {}) => {

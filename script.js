@@ -135,7 +135,7 @@ const main = async () => {
  */
 main()
   .catch((err) => {
-    messages.error(err?.message);
+    messages.error(changeColor("red", err?.message));
     process.exit(1);
   })
   .finally(async () => {
