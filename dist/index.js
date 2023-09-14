@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
+import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
 /******/ var __webpack_modules__ = ({
 
 /***/ 68:
@@ -4899,6 +4899,12 @@ const methods = {
     label: `${colors.magenta}deployed${colorReset}`,
     logLevel: "info",
   },
+  error: {
+    badge: changeColor("red", "✖"),
+    label: changeColor("red", "error"),
+    color: "red",
+    logLevel: "info",
+  },
 };
 
 const newScope = (options = {}) => {
@@ -5912,7 +5918,7 @@ const script_main = async () => {
  */
 script_main()
   .catch((err) => {
-    messages.error(err?.message);
+    messages.error(changeColor("red", err?.message));
     process.exit(1);
   })
   .finally(async () => {
@@ -5921,5 +5927,3 @@ script_main()
 
 })();
 
-
-//# sourceMappingURL=index.js.map
