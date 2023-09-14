@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSpawn, existFolder, makeOutput, parseJsonFile, readFile, writeFileJSON } from "./src/util/common.js";
+import { execSpawn, existFolder, makeOutput, parseJsonFile, readFile, removeCharactersAndSpaces, writeFileJSON } from "./src/util/common.js";
 import { changeColor, messages } from "./src/util/message-log.js";
 import { publishOrUpdate } from "./src/publish/index.js";
 
@@ -15,7 +15,7 @@ const {
   INPUT_FUNCTIONARGSFILEPATH,
   INPUT_BUILDPRESET,
   INPUT_BUILDMODE,
-  INPUT_BUILDCODEENTRY,
+  INPUT_BUILDENTRY,
   INPUT_BUILDSTATICFOLDER,
   INPUT_EDGEMODULEACCELERATION,
 } = process.env;
@@ -27,6 +27,7 @@ const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
  * constants
  */
 const BASE_URL_AZION_API = "api-origin.azionapi.net";
+const VULCAN_COMMAND = "npx --yes edge-functions@1.6.0";
 
 /**
  * main function where you run the script
@@ -38,7 +39,7 @@ const main = async () => {
   messages.textOnly("Build and Deploy applications on the Edge with Azion");
   messages.textOnly(`Preset · ${INPUT_BUILDPRESET}`);
 
-  let APPLICATION_NAME_VALID = INPUT_APPLICATIONNAME;
+  let APPLICATION_NAME_VALID = removeCharactersAndSpaces(INPUT_APPLICATIONNAME || '');
 
   if (!INPUT_APPLICATIONNAME) {
     const [_, REPO_NAME] = GITHUB_REPOSITORY?.split("/");
@@ -63,13 +64,13 @@ const main = async () => {
   // // build code by vulcan preset
   messages.build.title("BUILD CODE BY VULCAN");
   const BUILD_MODE_VALID = INPUT_BUILDMODE || "deliver";
-  let buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID}`;
+  let buildCmd = `${VULCAN_COMMAND} build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID}`;
   if (BUILD_MODE_VALID === "compute") {
-    const entry = `${INPUT_BUILDCODEENTRY || "./main.js"}`;
-    buildCmd = `vulcan build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID} --entry ${entry}`;
+    const entry = `${INPUT_BUILDENTRY || "./main.js"}`;
+    buildCmd = `${VULCAN_COMMAND} build --preset ${INPUT_BUILDPRESET} --mode ${BUILD_MODE_VALID} --entry ${entry}`;
   }
   await execSpawn(sourceCodePath, buildCmd);
-  const staticFolder = INPUT_BUILDSTATICFOLDER ? `${sourceCodePath}/${INPUT_BUILDSTATICFOLDER}` : `${sourceCodePath}/.edge/statics`
+  const staticFolder = INPUT_BUILDSTATICFOLDER ? `${sourceCodePath}/${INPUT_BUILDSTATICFOLDER}` : `${sourceCodePath}/.edge/storage`
   await existFolder(staticFolder).catch(async (err) => {
     const msg = "folder statics not exist, problem on build"
     messages.build.error(msg);
@@ -107,7 +108,8 @@ const main = async () => {
     BASE_URL_AZION_API,
     INPUT_AZIONPERSONALTOKEN,
     { acceleration: EDGE_MODULE_ACCELERATION_VALID },
-    inputSourceCode
+    inputSourceCode,
+    VULCAN_COMMAND
   );
   messages.deploy.complete("deploy");
   messages.deploy.deployed("Edge Application");

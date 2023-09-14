@@ -1,10 +1,11 @@
 {
   "name": "edge-computing-deploy",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "This action was created to help deploy an edge application at Azion.",
   "main": "script.js",
   "type": "module",
   "scripts": {
+    "prepare": "ncc build script.js -o dist --source-map --license licenses.txt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -21,5 +22,7 @@
     "dotenv": "^16.3.1",
     "signale": "^1.4.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.0"
+  }
 }

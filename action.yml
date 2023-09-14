@@ -19,7 +19,7 @@ inputs:
     required: false
     default: "deliver"
   buildEntry:
-    description: "build Entry"
+    description: "build Entry - if buildMode compute"
     required: false
     default: "./main.js"
   edgeModuleAcceleration:
@@ -33,9 +33,10 @@ outputs:
   domainUrl:
     description: "Return edge domain url"  
 
+# because vulcan use node 18
 runs:
-  using: "docker"
-  image: 'docker://josebsf/gh-actions-edge-computing-deploy:jam-5.0.0'
+  using: "node20"
+  main: 'script.js'
 
 branding:
   icon: cloud-lightning

@@ -1,6 +1,5 @@
 import * as util from "node:util";
 import * as child from "node:child_process";
-import * as fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 const exec = util.promisify(child.exec);
 import { writeFile, readFile as _readFile } from "fs/promises";
@@ -180,6 +179,23 @@ const existFolder = async (path) => {
   return Promise.resolve(exist);
 };
 
+
+/**
+ * Remove Characters and Spaces
+ * @param {string} text 
+ * @returns 
+ */
+const removeCharactersAndSpaces = (text) => {
+  let textNormalize = text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // accents
+    .replace(/[^\w\s]/gi, " ") // specials characters
+    .replace(/\s+/g, "-"); // white spaces
+  textNormalize = textNormalize.charAt(0) === "-" ? textNormalize.slice(1) : textNormalize; // remove first "-"
+  textNormalize = textNormalize.slice(-1) === "-" ? textNormalize.slice(0, -1) : textNormalize; // remove last "-"
+  return textNormalize;
+};
+
 export {
   extractGitHubRepoPath,
   execCommandWithPath,
@@ -192,4 +208,5 @@ export {
   execSpawn,
   makeOutput,
   existFolder,
+  removeCharactersAndSpaces,
 };

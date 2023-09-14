@@ -14,7 +14,7 @@ In this example below using the template [Angular Boilerplate](https://github.co
 ```yml
 - name: edge-computing-deploy
   id: azion_edge
-  uses: jcbsfilho/edge-computing-deploy@v5.0.0
+  uses: jcbsfilho/edge-computing-deploy@v6.0.0
   with:
     azionPersonalToken: ${{ secrets.AZION_PERSONAL_TOKEN }}
     functionArgsFilePath: "args.json"
@@ -80,7 +80,7 @@ Build preset by Vulcan ex: angular
 
 ### `buildMode`
 
-Build mode by Vulcan ex: deliver
+Build mode by Vulcan e.g: deliver
 
 ```bash
 
@@ -100,6 +100,12 @@ Build mode by Vulcan ex: deliver
 ```
 
 **Required**
+
+### `buildEntry`
+
+If mode compute (default: ./main.js)
+
+**Optional**
 
 
 ### `edgeModuleAcceleration`

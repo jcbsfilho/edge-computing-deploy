@@ -1,4 +1,3 @@
-import { logInfo } from "../util/logger.js";
 import * as apiAzion from "../services/azion-api.js";
 import { commitAutomation, execSpawn, generateUUID, parseJsonFile, readFile } from "../util/common.js";
 import * as dotenv from "dotenv";
@@ -17,10 +16,11 @@ import { messages } from "../util/message-log.js";
  * @param {string} sourceCode.versionBuildPath
  * @param {string} sourceCode.buildPreset
  * @param {string} sourceCode.buildMode
- * @param {*} sourceCode.info
+ * @param {object} sourceCode.info
+ * @param {string} VULCAN_COMMAND
  * @returns {Promise}
  */
-const publishOrUpdate = async (url, token, modules, sourceCode) => {
+const publishOrUpdate = async (url, token, modules, sourceCode, VULCAN_COMMAND) => {
   let result = {};
 
   const functionCode = await readFile(sourceCode.functionPath);
@@ -62,8 +62,8 @@ const publishOrUpdate = async (url, token, modules, sourceCode) => {
   if (sourceCode?.buildMode === "deliver") {
     const AZION_ENV_VALUE = "production";
     messages.deployUpdate.await("storage files");
-    await execSpawn(sourceCode.path, `AZION_ENV=${AZION_ENV_VALUE} DEBUG=true vulcan auth --token ${token}`);
-    await execSpawn(sourceCode.path, `AZION_ENV=${AZION_ENV_VALUE} DEBUG=true vulcan storage sync`);
+    await execSpawn(sourceCode.path, `AZION_ENV=${AZION_ENV_VALUE} DEBUG=true ${VULCAN_COMMAND} auth --token ${token}`);
+    await execSpawn(sourceCode.path, `AZION_ENV=${AZION_ENV_VALUE} DEBUG=true ${VULCAN_COMMAND} storage sync`);
     messages.deployUpdate.success("storage files");
   }
 
