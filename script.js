@@ -73,7 +73,6 @@ const main = async () => {
   const staticFolder = INPUT_BUILDSTATICFOLDER ? `${sourceCodePath}/${INPUT_BUILDSTATICFOLDER}` : `${sourceCodePath}/.edge/storage`
   await existFolder(staticFolder).catch(async (err) => {
     const msg = "folder statics not exist, problem on build"
-    messages.build.error(msg);
     throw new Error(msg)
   });
   messages.build.complete("building code");
