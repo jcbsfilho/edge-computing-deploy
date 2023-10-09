@@ -5811,7 +5811,7 @@ const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
  * constants
  */
 const BASE_URL_AZION_API = "api-origin.azionapi.net";
-const VULCAN_COMMAND = "npx --yes edge-functions@1.6.0";
+const VULCAN_COMMAND = "npx --yes edge-functions@1.7.0";
 
 /**
  * main function where you run the script
