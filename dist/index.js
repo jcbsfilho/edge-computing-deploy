@@ -5831,7 +5831,7 @@ const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
  */
 const BASE_URL_AZION_API = "api-origin.azionapi.net";
 const VULCAN_COMMAND = "npx --yes edge-functions@1.7.0";
-
+// change version vulcan
 /**
  * main function where you run the script
  * @returns {void}
