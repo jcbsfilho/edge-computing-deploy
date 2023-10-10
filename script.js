@@ -36,9 +36,9 @@ const { GITHUB_WORKSPACE, GITHUB_REPOSITORY } = process.env;
  * constants
  */
 const BASE_URL_AZION_API = INPUT_SCRIPTENV === "stage" ? "stage-api-origin.azion.net" : "api-origin.azionapi.net";
-const VULCAN_COMMAND = "npx --yes edge-functions@v1.7.0-stage.3";
+const VULCAN_COMMAND = "npx --yes edge-functions@v1.7.1";
 const FUNCTION_WORK_PATH_DEFAULT = ".edge/worker.js";
-const BUILD_ENTRY_DEFAULT = (INPUT_BUILDPRESET?.toLocaleLowerCase() === "typescript") ? "./main.js" : "./main.ts";
+const BUILD_ENTRY_DEFAULT = (INPUT_BUILDPRESET?.toLocaleLowerCase() === "typescript") ? "./main.ts" : "./main.js";
 const STORAGE_PATH_DEFAULT = ".edge/storage";
 const VERSION_ENV_PATH_DEFAULT = ".edge/.env";
 
