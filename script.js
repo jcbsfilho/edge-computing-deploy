@@ -52,6 +52,7 @@ const main = async () => {
   messages.title(changeColor("red", "JAMStack Azion Deployment"));
   messages.textOnly("Build and Deploy applications on the Edge with Azion");
   messages.textOnly(`Preset · ${INPUT_BUILDPRESET}`);
+  messages.textOnly(`Environment · ${INPUT_SCRIPTENV}`);
 
   // check script env
   if(!["production", "stage"].includes(INPUT_SCRIPTENV)){
